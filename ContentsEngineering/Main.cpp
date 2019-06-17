@@ -1,20 +1,20 @@
 
-#define _CRT_SECURE_NO_WARNINGS//OpenCV“à•”‚ÌfopenƒGƒ‰[‚ğ–Ù‚ç‚¹‚é
+#define _CRT_SECURE_NO_WARNINGS//OpenCVå†…éƒ¨ã®fopenã‚¨ãƒ©ãƒ¼ã‚’é»™ã‚‰ã›ã‚‹
 
-//ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+//ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 #include <iostream>
 #include <fstream>
-#include<opencv2\\opencv.hpp>
+#include<opencv2Â¥Â¥opencv.hpp>
 
 
 #ifdef _DEBUG
-#pragma comment(lib,"c:\\dev\\opencv-3.2.0\\build\\x64\\vc14\\lib\\opencv_world320d.lib")
+#pragma comment(lib,"c:Â¥Â¥devÂ¥Â¥opencv-3.4.0Â¥Â¥buildÂ¥Â¥x64Â¥Â¥vc15Â¥Â¥libÂ¥Â¥opencv_world340d.lib")
 #else
-#pragma comment(lib,"c:\\dev\\opencv-3.2.0\\build\\x64\\vc14\\lib\\opencv_world320.lib")
+#pragma comment(lib,"c:Â¥Â¥devÂ¥Â¥opencv-3.4.0Â¥Â¥buildÂ¥Â¥x64Â¥Â¥vc15Â¥Â¥libÂ¥Â¥opencv_world340.lib")
 #endif // DEBUG
 
 
-//Kinect SDK‚ÉŠÜ‚Ü‚ê‚éƒwƒbƒ_
+//Kinect SDKã«å«ã¾ã‚Œã‚‹ãƒ˜ãƒƒãƒ€
 #include <windows.h>
 #include <NuiApi.h>
 #include <NuiSkeleton.h>
@@ -22,7 +22,7 @@
 
 int main(int argc, char* argv[]){
 
-	// Kinect‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬A‰Šú‰»
+	// Kinectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆã€åˆæœŸåŒ–
 	INuiSensor* pSensor;
 	HRESULT hResult = S_OK;
 	hResult = NuiCreateSensorByIndex(0, &pSensor);
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-	// ColorƒXƒgƒŠ[ƒ€
+	// Colorã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	HANDLE hColorEvent = INVALID_HANDLE_VALUE;
 	HANDLE hColorHandle = INVALID_HANDLE_VALUE;
 	hColorEvent = CreateEvent(nullptr, true, false, nullptr);
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-	// Depth&PlayerƒXƒgƒŠ[ƒ€
+	// Depth&Playerã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	HANDLE hDepthPlayerEvent = INVALID_HANDLE_VALUE;
 	HANDLE hDepthPlayerHandle = INVALID_HANDLE_VALUE;
 	hDepthPlayerEvent = CreateEvent(nullptr, true, false, nullptr);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-	// SkeletonƒXƒgƒŠ[ƒ€
+	// Skeletonã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	HANDLE hSkeletonEvent = INVALID_HANDLE_VALUE;
 	hSkeletonEvent = CreateEvent(nullptr, true, false, nullptr);
 	hResult = pSensor->NuiSkeletonTrackingEnable(hSkeletonEvent, 0);
@@ -66,14 +66,14 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-	// ‰ğ‘œ“x‚Ìæ“¾
+	// è§£åƒåº¦ã®å–å¾—
 	unsigned long refWidth = 0;
 	unsigned long refHeight = 0;
 	NuiImageResolutionToSize(NUI_IMAGE_RESOLUTION_640x480, refWidth, refHeight);
 	int width = static_cast<int>(refWidth);
 	int height = static_cast<int>(refHeight);
 
-	// ˆÊ’u‡‚í‚¹‚Ìİ’è
+	// ä½ç½®åˆã‚ã›ã®è¨­å®š
 	INuiCoordinateMapper* pCordinateMapper;
 	hResult = pSensor->NuiGetCoordinateMapper(&pCordinateMapper);
 	if (FAILED(hResult)) {
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]){
 
 	HANDLE hEvents[3] = { hColorEvent, hDepthPlayerEvent, hSkeletonEvent };
 
-	// ƒJƒ‰[ƒe[ƒuƒ‹
+	// ã‚«ãƒ©ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«
 	cv::Vec3b color[7];
 	color[0] = cv::Vec3b(0, 0, 0);
 	color[1] = cv::Vec3b(255, 0, 0);
@@ -94,19 +94,14 @@ int main(int argc, char* argv[]){
 	color[5] = cv::Vec3b(255, 0, 255);
 	color[6] = cv::Vec3b(0, 255, 255);
 
-	cv::namedWindow("Color");
-	cv::namedWindow("Depth");
-	cv::namedWindow("Player");
-	cv::namedWindow("Skeleton");
-
 	while (1) {
-		// ƒtƒŒ[ƒ€‚ÌXV‘Ò‚¿
+		// ãƒ•ãƒ¬ãƒ¼ãƒ ã®æ›´æ–°å¾…ã¡
 		ResetEvent(hColorEvent);
 		ResetEvent(hDepthPlayerEvent);
 		ResetEvent(hSkeletonEvent);
 		WaitForMultipleObjects(ARRAYSIZE(hEvents), hEvents, true, INFINITE);
 
-		// ColorƒJƒƒ‰‚©‚çƒtƒŒ[ƒ€‚ğæ“¾
+		// Colorã‚«ãƒ¡ãƒ©ã‹ã‚‰ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’å–å¾—
 		NUI_IMAGE_FRAME colorImageFrame = { 0 };
 		hResult = pSensor->NuiImageStreamGetNextFrame(hColorHandle, 0, &colorImageFrame);
 		if (FAILED(hResult)) {
@@ -114,12 +109,12 @@ int main(int argc, char* argv[]){
 			return -1;
 		}
 
-		// Color‰æ‘œƒf[ƒ^‚Ìæ“¾
+		// Colorç”»åƒãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 		INuiFrameTexture* pColorFrameTexture = colorImageFrame.pFrameTexture;
 		NUI_LOCKED_RECT colorLockedRect;
 		pColorFrameTexture->LockRect(0, &colorLockedRect, nullptr, 0);
 
-		// DepthƒZƒ“ƒT[‚©‚çƒtƒŒ[ƒ€‚ğæ“¾
+		// Depthã‚»ãƒ³ã‚µãƒ¼ã‹ã‚‰ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’å–å¾—
 		NUI_IMAGE_FRAME depthPlayerImageFrame = { 0 };
 		hResult = pSensor->NuiImageStreamGetNextFrame(hDepthPlayerHandle, 0, &depthPlayerImageFrame);
 		if (FAILED(hResult)) {
@@ -127,14 +122,14 @@ int main(int argc, char* argv[]){
 			return -1;
 		}
 
-		// Depth&Playerƒf[ƒ^‚Ìæ“¾
+		// Depth&Playerãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 		BOOL nearMode = false;
 		INuiFrameTexture* pDepthPlayerFrameTexture = nullptr;
 		pSensor->NuiImageFrameGetDepthImagePixelFrameTexture(hDepthPlayerHandle, &depthPlayerImageFrame, &nearMode, &pDepthPlayerFrameTexture);
 		NUI_LOCKED_RECT depthPlayerLockedRect;
 		pDepthPlayerFrameTexture->LockRect(0, &depthPlayerLockedRect, nullptr, 0);
 
-		// SkeletonƒtƒŒ[ƒ€‚ğæ“¾
+		// Skeletonãƒ•ãƒ¬ãƒ¼ãƒ ã‚’å–å¾—
 		NUI_SKELETON_FRAME skeletonFrame = { 0 };
 		hResult = pSensor->NuiSkeletonGetNextFrame(0, &skeletonFrame);
 		if (FAILED(hResult)) {
@@ -143,18 +138,18 @@ int main(int argc, char* argv[]){
 		}
 
 		/*
-		// ƒXƒ€[ƒWƒ“ƒO
+		// ã‚¹ãƒ ãƒ¼ã‚¸ãƒ³ã‚°
 		NUI_TRANSFORM_SMOOTH_PARAMETERS smoothParameter;
-		smoothParameter.fSmoothing = 0.5; // •½ŠŠ‰»[0.0f-1.0f]
-		smoothParameter.fCorrection = 0.5; // •â³—Ê[0.0f-1.0f]
-		smoothParameter.fPrediction = 0.0f; // —\‘ªƒtƒŒ[ƒ€”[0.0f-]
-		smoothParameter.fJitterRadius = 0.05f; // ƒWƒbƒ^—}§”¼Œa[0.0f-]
-		smoothParameter.fMaxDeviationRadius = 0.04f; // Å‘å—}§”ÍˆÍ[0.0f-]
+		smoothParameter.fSmoothing = 0.5; // å¹³æ»‘åŒ–[0.0f-1.0f]
+		smoothParameter.fCorrection = 0.5; // è£œæ­£é‡[0.0f-1.0f]
+		smoothParameter.fPrediction = 0.0f; // äºˆæ¸¬ãƒ•ãƒ¬ãƒ¼ãƒ æ•°[0.0f-]
+		smoothParameter.fJitterRadius = 0.05f; // ã‚¸ãƒƒã‚¿æŠ‘åˆ¶åŠå¾„[0.0f-]
+		smoothParameter.fMaxDeviationRadius = 0.04f; // æœ€å¤§æŠ‘åˆ¶ç¯„å›²[0.0f-]
 
 		hResult = NuiTransformSmooth( &skeletonFrame, &smoothParameter );
 		*/
 
-		// •\¦
+		// è¡¨ç¤º
 		cv::Mat colorMat(height, width, CV_8UC4, reinterpret_cast<unsigned char*>(colorLockedRect.pBits));
 
 		cv::Mat bufferMat = cv::Mat::zeros(height, width, CV_16UC1);
@@ -179,7 +174,7 @@ int main(int argc, char* argv[]){
 				for (int position = 0; position < NUI_SKELETON_POSITION_COUNT; position++) {
 					pCordinateMapper->MapSkeletonPointToColorPoint(&skeletonData.SkeletonPositions[position], NUI_IMAGE_TYPE_COLOR, NUI_IMAGE_RESOLUTION_640x480, &colorPoint);
 					if ((colorPoint.x >= 0) && (colorPoint.x < width) && (colorPoint.y >= 0) && (colorPoint.y < height)) {
-						cv::circle(skeletonMat, cv::Point(colorPoint.x, colorPoint.y), 10, static_cast<cv::Scalar>(color[count + 1]), -1, CV_AA);
+						cv::circle(colorMat, cv::Point(colorPoint.x, colorPoint.y), 10, static_cast<cv::Scalar>(color[count + 1]), -1, CV_AA);
 					}
 				}
 
@@ -187,35 +182,32 @@ int main(int argc, char* argv[]){
 				ss << skeletonData.SkeletonPositions[NUI_SKELETON_POSITION_HIP_CENTER].z;
 				pCordinateMapper->MapSkeletonPointToColorPoint(&skeletonData.SkeletonPositions[NUI_SKELETON_POSITION_HEAD], NUI_IMAGE_TYPE_COLOR, NUI_IMAGE_RESOLUTION_640x480, &colorPoint);
 				if ((colorPoint.x >= 0) && (colorPoint.x < width) && (colorPoint.y >= 0) && (colorPoint.y < height)) {
-					cv::putText(skeletonMat, ss.str(), cv::Point(colorPoint.x - 50, colorPoint.y - 20), cv::FONT_HERSHEY_SIMPLEX, 1.5f, static_cast<cv::Scalar>(color[count + 1]));
-				}
+									}
 			}
 			else if (skeletonData.eTrackingState == NUI_SKELETON_POSITION_ONLY) {
 				pCordinateMapper->MapSkeletonPointToColorPoint(&skeletonData.SkeletonPositions[NUI_SKELETON_POSITION_HIP_CENTER], NUI_IMAGE_TYPE_COLOR, NUI_IMAGE_RESOLUTION_640x480, &colorPoint);
 				if ((colorPoint.x >= 0) && (colorPoint.x < width) && (colorPoint.y >= 0) && (colorPoint.y < height)) {
-					cv::circle(skeletonMat, cv::Point(colorPoint.x, colorPoint.y), 10, static_cast<cv::Scalar>(color[count + 1]), -1, CV_AA);
+					cv::circle(colorMat, cv::Point(colorPoint.x, colorPoint.y), 10, static_cast<cv::Scalar>(color[count + 1]), -1, CV_AA);
 				}
 			}
 		}
 
 		cv::imshow("Color", colorMat);
-		cv::imshow("Depth", depthMat);
-		cv::imshow("Player", playerMat);
-		cv::imshow("Skeleton", skeletonMat);
+		
 
-		// ƒtƒŒ[ƒ€‚Ì‰ğ•ú
+		// ãƒ•ãƒ¬ãƒ¼ãƒ ã®è§£æ”¾
 		pColorFrameTexture->UnlockRect(0);
 		pDepthPlayerFrameTexture->UnlockRect(0);
 		pSensor->NuiImageStreamReleaseFrame(hColorHandle, &colorImageFrame);
 		pSensor->NuiImageStreamReleaseFrame(hDepthPlayerHandle, &depthPlayerImageFrame);
 
-		// ƒ‹[ƒv‚ÌI—¹”»’è(EscƒL[)
+		// ãƒ«ãƒ¼ãƒ—ã®çµ‚äº†åˆ¤å®š(Escã‚­ãƒ¼)
 		if (cv::waitKey(30) == VK_ESCAPE) {
 			break;
 		}
 	}
 
-	// Kinect‚ÌI—¹ˆ—
+	// Kinectã®çµ‚äº†å‡¦ç†
 	pSensor->NuiShutdown();
 	pSensor->NuiSkeletonTrackingDisable();
 	pCordinateMapper->Release();
